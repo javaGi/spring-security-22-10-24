@@ -33,18 +33,25 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
 
         if (token != null && token.startsWith("Bearer ")) {
-            String tokenVal = token.substring(8,token.length()-1).trim(); // Trim any spaces or newlines
-            System.out.println("Token Value: " + tokenVal); // Log it
+
+            // Remove "Bearer "
+            String tokenVal = token.substring(7).trim();
+            // Remove starting and ending quotes (if present)
+            if (tokenVal.startsWith("\"") && tokenVal.endsWith("\"")) {
+                tokenVal = tokenVal.substring(1, tokenVal.length() - 1);
+                System.out.println("✅ Final Clean Token: " + tokenVal);
+            }
 
 
             String username = jwtService.getUserName(tokenVal);
             System.out.println(username);
+            System.out.println("✅ Username from token: " + username);
             Optional<SignUpUser> opUsername = signUpUserRepository.findByUsername(username);
             if (opUsername.isPresent()) {
                 SignUpUser signUpUser = opUsername.get();
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(signUpUser,null,null);
                 authenticationToken.setDetails(new WebAuthenticationDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 
 
             }
