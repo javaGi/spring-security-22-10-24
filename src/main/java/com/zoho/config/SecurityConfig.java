@@ -38,11 +38,12 @@ private JWTFilter jwtFilter;
         http.addFilterBefore(jwtFilter, AuthorizationFilter.class);
         //haap
         /* this line of code is used to get opened for all the URLs  */
-     //   http.authorizeHttpRequests().anyRequest().permitAll();
-        http.authorizeHttpRequests().
-                requestMatchers("/api/v/user/login","/api/v/user/signup")
-                .permitAll()
-                .anyRequest().authenticated();
+        http.authorizeHttpRequests().anyRequest().permitAll();
+//        http.authorizeHttpRequests().
+//                requestMatchers("/api/v/user/login","/api/v/user/signup","/api/v/user/signup-property-owner")
+//                .permitAll()
+//                .requestMatchers("/api/v/country/addCountry").hasAnyRole("OWNER","ADMIN")
+//                .anyRequest().authenticated();
 
 
         return http.build();

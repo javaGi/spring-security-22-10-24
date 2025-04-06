@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CountryController {
 
     // http://localhost:8080/api/v/country
-    @PostMapping
+    // http://localhost:8080/api/v/country/addCountry
+    @PostMapping("/addCountry")
     public String addCountry(){
         return "added";
     }
