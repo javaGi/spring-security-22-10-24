@@ -38,7 +38,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             // Remove "Bearer "
             String tokenVal = token.substring(7).trim();
-            // Remove starting and ending quotes (if present)
+            // Remove white space starting and ending quotes (if present)
             if (tokenVal.startsWith("\"") && tokenVal.endsWith("\"")) {
                 tokenVal = tokenVal.substring(1, tokenVal.length() - 1);
                 System.out.println("✅ Final Clean Token: " + tokenVal);

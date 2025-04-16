@@ -1,7 +1,6 @@
 package com.zoho.payload;
 
 
-
 public class LoginDto {
 
     private String username;

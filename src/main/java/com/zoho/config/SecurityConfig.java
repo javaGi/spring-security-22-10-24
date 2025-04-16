@@ -1,7 +1,7 @@
+/* this is the spring security configuration's part */
+
+
 package com.zoho.config;
-
-
-
 import lombok.SneakyThrows;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,15 +34,18 @@ private JWTFilter jwtFilter;
 
         /* if you want to get the Urls go through the do-filter method, you have to add this line.
          you are telling that Jwt filter should run first then Authentication should run.
-         */
+        for below method */
         http.addFilterBefore(jwtFilter, AuthorizationFilter.class);
         //haap
         /* this line of code is used to get opened for all the URLs  */
         http.authorizeHttpRequests().anyRequest().permitAll();
+
+        /* if you want to restrict the urls, you must go to the below code.....*/
+
 //        http.authorizeHttpRequests().
 //                requestMatchers("/api/v/user/login","/api/v/user/signup","/api/v/user/signup-property-owner")
 //                .permitAll()
-//                .requestMatchers("/api/v/country/addCountry").hasAnyRole("OWNER","ADMIN")
+//                .requestMatchers("/api/v/country/create").hasAnyRole("OWNER","ADMIN")
 //                .anyRequest().authenticated();
 
 
