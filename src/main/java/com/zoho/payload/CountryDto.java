@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 @Setter
 public class CountryDto {
 
-
     private long id;
     @Size(min = 2,message = "the name should be at least 2 characters")
     private String name;

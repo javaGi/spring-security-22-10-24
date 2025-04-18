@@ -29,13 +29,13 @@ public class CityController {
     //http://localhost:8080/api/v/city/create
 
     @PostMapping("/create")
-    public ResponseEntity<?> createCity(@Validated @RequestBody CityDto cityDto, BindingResult bindingResult) {
+    public ResponseEntity<?> createCity(@RequestParam long countryId,@Validated @RequestBody CityDto cityDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(bindingResult.getFieldError().getDefaultMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
-        CityDto dto = cityService.createCity(cityDto);
+        CityDto dto = cityService.createCity(cityDto,countryId);
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
 
     }
@@ -55,20 +55,22 @@ public class CityController {
             @RequestParam(name = "pageNo",defaultValue = "0",required = false) int pageNo,
             @RequestParam(name = "pageSize",defaultValue = "3",required = false) int pageSize,
             @RequestParam(name= "sortBy",defaultValue = "id",required = false) String sortBy,
-            @RequestParam(name="sortDir",defaultValue = "asc",required = false) String sortDir
+            @RequestParam(name="sortDir",defaultValue = "asc",required = false) String sortDir,
+            @RequestParam(name = "countryId", required = false) Long countryId
 // always check spelling and this is case-sensitive .so it should be exact matched with name
     ){
 
-        List<CityDto> cityDtos = cityService.getAllCity(pageNo,pageSize,sortBy,sortDir);
+        List<CityDto> cityDtos = cityService.getAllCity(pageNo,pageSize,sortBy,sortDir,countryId);
         return new ResponseEntity<>(cityDtos,HttpStatus.OK);
     }
 
-    // http://localhost:8080/api/v/city/update/6
+
+   // PUT http://localhost:8080/api/v/city/update/2?countryId=1
 
     @PutMapping("/update/{id}")
-public ResponseEntity<CityDto> updateCity(@PathVariable long id, @RequestBody CityDto cityDto){
+public ResponseEntity<CityDto> updateCity(@PathVariable long id,@RequestParam(required = false) Long countryId, @RequestBody CityDto cityDto){
 
-        CityDto dto = cityService.updateCity(id,cityDto);
+        CityDto dto = cityService.updateCity(id,cityDto,countryId);
 
 
          return new ResponseEntity<>(dto, HttpStatus.CREATED);
@@ -80,9 +82,9 @@ public ResponseEntity<CityDto> updateCity(@PathVariable long id, @RequestBody Ci
     public ResponseEntity<String> existById(@PathVariable long id) {
         boolean exists = cityService.existById(id);
         if (exists) {
-            return new ResponseEntity<>("City exists with the id", HttpStatus.OK);
+            return new ResponseEntity<>("City exists with the id : " +id, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("City not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("City not found with the id : " +id, HttpStatus.NOT_FOUND);
         }
 
     }
@@ -93,9 +95,7 @@ public ResponseEntity<CityDto> updateCity(@PathVariable long id, @RequestBody Ci
     @GetMapping("/by-name/{name}")
     public ResponseEntity<List<CityDto>> findByCity(@PathVariable String name) {
         List<CityDto> cities = cityService.findByCity(name);
-        if (cities.isEmpty()) {
-            throw new ResourceNotFoundException("No cities found with name: " + name);
-        }
+
         return new ResponseEntity<>(cities, HttpStatus.OK);
     }
 

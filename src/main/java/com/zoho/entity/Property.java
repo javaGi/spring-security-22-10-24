@@ -11,14 +11,13 @@ import lombok.Setter;
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "no_of_guest", nullable = false)
-    private Integer no_of_guest;
+    @Column(name = "no_of_guests", nullable = false)
+    private Integer no_of_guests;
 
     @Column(name = "no_of_bedrooms", nullable = false)
     private Integer no_of_bedrooms;
@@ -29,12 +28,13 @@ public class Property {
     @Column(name = "no_of_beds", nullable = false)
     private Integer no_of_beds;
 
+    // ✅ Link to country
     @ManyToOne
-    @JoinColumn(name = "country_id")
+    @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
+    // ✅ Link to city
     @ManyToOne
-    @JoinColumn(name = "city_id")
+    @JoinColumn(name = "city_id", nullable = false)
     private City city;
-
 }
