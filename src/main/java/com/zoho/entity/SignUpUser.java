@@ -2,6 +2,10 @@ package com.zoho.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Setter
 @Getter
@@ -28,6 +32,11 @@ public class SignUpUser {
 
     @Column(name = "role", nullable = false, length = 20)
     private String role;
+
+    //✅ Link to reviews
+    @OneToMany(mappedBy = "signUpUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
+
 
 
 }

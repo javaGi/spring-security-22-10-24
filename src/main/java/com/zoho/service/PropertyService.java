@@ -105,21 +105,52 @@ public class PropertyService {
         propertyRepository.deleteById(id);
     }
 
-    public List<PropertyDto> getAllProperties(int page, int size, String sortBy, String sortDir) {
+    public List<PropertyDto> getAllProperties(int page, int size, String sortBy, String sortDir, Long countryId, Long cityId) {
         Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
-
         Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Property> pageProperties;
 
-        Page<Property> pageProperties = propertyRepository.findAll(pageable);
+        if (countryId != null && cityId != null) {
+            Country country = countryRepository.findById(countryId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Country not found with id: " + countryId));
+
+            City city = cityRepository.findById(cityId)
+                    .orElseThrow(() -> new ResourceNotFoundException("City not found with id: " + cityId));
+
+            pageProperties = propertyRepository.findByCityAndCountry(city, country, pageable);
+            if (pageProperties.isEmpty()) {
+                throw new ResourceNotFoundException("No properties found for the given city and country");
+            }
+
+        } else if (cityId != null) {
+            City city = cityRepository.findById(cityId)
+                    .orElseThrow(() -> new ResourceNotFoundException("City not found with id: " + cityId));
+
+            pageProperties = propertyRepository.findByCity(city, pageable);
+            if (pageProperties.isEmpty()) {
+                throw new ResourceNotFoundException("No properties found for city id: " + cityId);
+            }
+
+        } else if (countryId != null) {
+            Country country = countryRepository.findById(countryId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Country not found with id: " + countryId));
+
+            pageProperties = propertyRepository.findByCountry(country, pageable);
+            if (pageProperties.isEmpty()) {
+                throw new ResourceNotFoundException("No properties found for country id: " + countryId);
+            }
+
+        } else {
+            pageProperties = propertyRepository.findAll(pageable);
+        }
+
         List<Property> properties = pageProperties.getContent();
-
-        // Convert each Property to PropertyDto
-        List<PropertyDto> dtos = properties.stream()
+        return properties.stream()
                 .map(property -> modelMapper.map(property, PropertyDto.class))
                 .collect(Collectors.toList());
-        return dtos;
     }
+
 
 
 //    public List<PropertyDto> searchPropertiesByLocation(String location) {
@@ -132,16 +163,27 @@ public class PropertyService {
 //    }
 
     public List<PropertyDto> searchHotels(String name) {
+        // Step 1: Check if any country or city matches
+        boolean cityExists = cityRepository.existsByNameContainingIgnoreCase(name);
+        boolean countryExists = countryRepository.existsByNameContainingIgnoreCase(name);
 
+        if (!cityExists && !countryExists) {
+            throw new RuntimeException("No city or country found matching: " + name);
+        }
+
+        // Step 2: Search properties
         List<Property> properties = propertyRepository.searchHotels(name);
 
-               List<PropertyDto> dtos = properties.stream()
+        if (properties.isEmpty()) {
+            throw new RuntimeException("No properties found in city or country matching: " + name);
+        }
+
+        // Step 3: Map to DTOs
+        List<PropertyDto> dtos = properties.stream()
                 .map(property -> modelMapper.map(property, PropertyDto.class))
                 .collect(Collectors.toList());
         return dtos;
     }
-
-
 
 
 }

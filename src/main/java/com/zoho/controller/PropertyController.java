@@ -79,17 +79,20 @@ public class PropertyController {
 
 
     // ✅ 4. Get All with Pagination and Sorting
-    // Example GET : http://localhost:8080/api/v/property/all?page=0&size=5&sortBy=name&sortDir=asc
-    @GetMapping("/all")
+    // Example GET : http://localhost:8080/api/v/property/all?page=0&size=5&sortBy=name&sortDir=asc&cityId=1&countyId=1
+    @GetMapping("/properties")
     public ResponseEntity<List<PropertyDto>> getAllProperties(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-
-        List<PropertyDto> propertyDtos = propertyService.getAllProperties(page, size, sortBy, sortDir);
-        return new ResponseEntity<>(propertyDtos, HttpStatus.OK);
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) Long countryId,
+            @RequestParam(required = false) Long cityId
+    ) {
+        List<PropertyDto> dtos = propertyService.getAllProperties(page, size, sortBy, sortDir, countryId, cityId);
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
+
 
 
 //    // ✅ 5. Search by Location (city or country name)

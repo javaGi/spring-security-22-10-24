@@ -13,4 +13,6 @@ public interface CityRepository extends JpaRepository<City, Long> {
     List<City> findByNameIgnoreCase(String name);
 
     Page<City> findByCountryId(Long countryId, Pageable pageable);
+
+    boolean existsByNameContainingIgnoreCase(String name);
 }

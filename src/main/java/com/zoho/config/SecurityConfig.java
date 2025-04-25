@@ -14,6 +14,7 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 /* after adding the spring security configuration, if you don't want to get the unauthorised problem,you can configure these codes
 
 */
+
 @Configuration
 public class SecurityConfig {
 
